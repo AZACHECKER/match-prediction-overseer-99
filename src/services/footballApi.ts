@@ -1,4 +1,5 @@
 const FOOTBALL_BASE_URL = "https://v3.football.api-sports.io";
+const BETMINER_BASE_URL = "https://betminer.p.rapidapi.com";
 
 interface Match {
   id: number;
@@ -54,4 +55,19 @@ export const fetchMatchPrediction = async (matchId: string, apiKey: string) => {
     awayWinProb: parseInt(prediction.predictions.percent.away),
     advice: prediction.predictions.advice
   };
+};
+
+export const fetchInPlayPredictions = async () => {
+  const response = await fetch(`${BETMINER_BASE_URL}/bm/predictions/inplay`, {
+    headers: {
+      'x-rapidapi-key': '248d6b9851msh9d833e8ddf913efp17c26ejsn5f174b6901f8',
+      'x-rapidapi-host': 'betminer.p.rapidapi.com'
+    }
+  });
+
+  if (!response.ok) {
+    throw new Error('Failed to fetch in-play predictions');
+  }
+
+  return await response.json();
 };

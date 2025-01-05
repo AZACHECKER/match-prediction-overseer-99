@@ -6,12 +6,14 @@ import { useToast } from "@/components/ui/use-toast";
 import { Loader2 } from "lucide-react";
 import MatchList from "@/components/MatchList";
 import PredictionDisplay from "@/components/PredictionDisplay";
-import { fetchMatchPrediction } from "@/services/footballApi";
+import { fetchMatchPrediction, fetchInPlayPredictions } from "@/services/footballApi";
 
 const Index = () => {
   const [matchId, setMatchId] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const [isLoadingInPlay, setIsLoadingInPlay] = useState(false);
   const [prediction, setPrediction] = useState<any>(null);
+  const [inPlayPredictions, setInPlayPredictions] = useState<any>(null);
   const { toast } = useToast();
 
   const handleGetPrediction = async (id: string) => {
@@ -26,7 +28,7 @@ const Index = () => {
 
     setIsLoading(true);
     try {
-      const apiKey = "da0ced249d4c707bab494d05ab71fa25"; // This should be moved to a secret
+      const apiKey = "da0ced249d4c707bab494d05ab71fa25";
       const predictionData = await fetchMatchPrediction(id, apiKey);
       setPrediction(predictionData);
       setMatchId(id);
@@ -41,6 +43,26 @@ const Index = () => {
     }
   };
 
+  const handleGetInPlayPredictions = async () => {
+    setIsLoadingInPlay(true);
+    try {
+      const data = await fetchInPlayPredictions();
+      setInPlayPredictions(data);
+      toast({
+        title: "Успех",
+        description: "Прогнозы во время игры получены",
+      });
+    } catch (error) {
+      toast({
+        title: "Ошибка",
+        description: "Не удалось получить прогнозы во время игры",
+        variant: "destructive",
+      });
+    } finally {
+      setIsLoadingInPlay(false);
+    }
+  };
+
   return (
     <div className="min-h-screen p-4 md:p-8 space-y-8">
       <h1 className="text-3xl font-bold text-center mb-8">Футбольные матчи и прогнозы</h1>
@@ -49,6 +71,30 @@ const Index = () => {
         <Card className="p-6 space-y-4">
           <h2 className="text-xl font-semibold mb-4">Текущие матчи</h2>
           <MatchList onMatchSelect={handleGetPrediction} />
+          
+          <Button 
+            onClick={handleGetInPlayPredictions}
+            disabled={isLoadingInPlay}
+            className="w-full mt-4"
+          >
+            {isLoadingInPlay ? (
+              <>
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                Загрузка прогнозов
+              </>
+            ) : (
+              "Получить прогнозы во время игры"
+            )}
+          </Button>
+
+          {inPlayPredictions && (
+            <div className="mt-4 p-4 bg-secondary rounded-lg">
+              <h3 className="font-semibold mb-2">Прогнозы во время игры:</h3>
+              <pre className="text-sm overflow-auto">
+                {JSON.stringify(inPlayPredictions, null, 2)}
+              </pre>
+            </div>
+          )}
         </Card>
 
         <Card className="p-6 space-y-4">
