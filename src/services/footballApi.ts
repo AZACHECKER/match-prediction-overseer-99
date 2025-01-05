@@ -59,11 +59,15 @@ export const fetchMatchPrediction = async (matchId: string, apiKey: string) => {
 
 export const fetchInPlayPredictions = async () => {
   console.log('Fetching in-play predictions...');
-  const response = await fetch('https://betminer.p.rapidapi.com/bm/predictions/inplay', {
+  
+  // Get current date in YYYY-MM-DD format
+  const today = new Date().toISOString().split('T')[0];
+  
+  const response = await fetch(`${BETMINER_BASE_URL}/bm/v2/matches/${today}/${today}`, {
     method: 'GET',
     headers: {
-      'X-RapidAPI-Key': '248d6b9851msh9d833e8ddf913efp17c26ejsn5f174b6901f8',
-      'X-RapidAPI-Host': 'betminer.p.rapidapi.com'
+      'x-rapidapi-key': '248d6b9851msh9d833e8ddf913efp17c26ejsn5f174b6901f8',
+      'x-rapidapi-host': 'betminer.p.rapidapi.com'
     }
   });
 
