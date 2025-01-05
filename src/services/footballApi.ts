@@ -62,8 +62,8 @@ export const fetchInPlayPredictions = async () => {
   const response = await fetch('https://betminer.p.rapidapi.com/bm/predictions/inplay', {
     method: 'GET',
     headers: {
-      'x-rapidapi-key': '248d6b9851msh9d833e8ddf913efp17c26ejsn5f174b6901f8',
-      'x-rapidapi-host': 'betminer.p.rapidapi.com'
+      'X-RapidAPI-Key': '248d6b9851msh9d833e8ddf913efp17c26ejsn5f174b6901f8',
+      'X-RapidAPI-Host': 'betminer.p.rapidapi.com'
     }
   });
 
