@@ -13,40 +13,24 @@ import {
 } from "@/components/ui/dialog";
 
 interface MatchPrediction {
-  match_details: {
-    match_id: number;
-    match_date: string;
-    match_status: string;
-    home_team: string;
-    away_team: string;
-    home_logo: string;
-    away_logo: string;
-    competition_name: string;
-    country: string;
-  };
-  match_score: {
-    home_goals: number;
-    away_goals: number;
-    first_half_home_goals: number;
-    first_half_away_goals: number;
-  };
-  probability: {
-    home_win: string;
-    away_win: string;
-    draw: string;
-    both_teams_to_score: string;
-    over_15_goals: string;
-    over_25_goals: string;
-  };
-  predictions: {
-    win_draw_win: string;
-    correct_score: string;
-    half_time_full_time: string;
-  };
-  form_data: {
-    home_team_form: string;
-    away_team_form: string;
-  };
+  id: number;
+  date: string;
+  status: string;
+  home_goals: number;
+  away_goals: number;
+  homeTeam: string;
+  homeLogo: string;
+  awayTeam: string;
+  awayLogo: string;
+  country: string;
+  competition: string;
+  competition_full: string;
+  home_win: string;
+  away_win: string;
+  draw: string;
+  both_teams_to_score: string;
+  over15goals: string;
+  over25goals: string;
 }
 
 const InPlayPredictions = () => {
@@ -79,24 +63,24 @@ const InPlayPredictions = () => {
 
   const formatPrediction = (prediction: MatchPrediction) => {
     return (
-      <Card key={prediction.match_details.match_id} className="p-4 mb-4">
+      <Card key={prediction.id} className="p-4 mb-4">
         <div className="flex items-center justify-between mb-4">
           <div className="flex items-center gap-2">
             <img 
-              src={prediction.match_details.home_logo} 
-              alt={prediction.match_details.home_team}
+              src={prediction.homeLogo} 
+              alt={prediction.homeTeam}
               className="w-8 h-8"
             />
-            <span className="font-semibold">{prediction.match_details.home_team}</span>
+            <span className="font-semibold">{prediction.homeTeam}</span>
           </div>
           <div className="text-lg font-bold">
-            {prediction.match_score.home_goals} - {prediction.match_score.away_goals}
+            {prediction.home_goals} - {prediction.away_goals}
           </div>
           <div className="flex items-center gap-2">
-            <span className="font-semibold">{prediction.match_details.away_team}</span>
+            <span className="font-semibold">{prediction.awayTeam}</span>
             <img 
-              src={prediction.match_details.away_logo} 
-              alt={prediction.match_details.away_team}
+              src={prediction.awayLogo} 
+              alt={prediction.awayTeam}
               className="w-8 h-8"
             />
           </div>
@@ -105,42 +89,37 @@ const InPlayPredictions = () => {
         <div className="grid grid-cols-2 gap-4 text-sm">
           <div>
             <p className="text-muted-foreground">Турнир:</p>
-            <p>{prediction.match_details.competition_name} ({prediction.match_details.country})</p>
+            <p>{prediction.competition} ({prediction.country})</p>
           </div>
           <div>
             <p className="text-muted-foreground">Статус матча:</p>
-            <p>{prediction.match_details.match_status}</p>
-          </div>
-          <div>
-            <p className="text-muted-foreground">Первый тайм:</p>
-            <p>{prediction.match_score.first_half_home_goals} - {prediction.match_score.first_half_away_goals}</p>
-          </div>
-          <div>
-            <p className="text-muted-foreground">Прогноз:</p>
-            <p>{prediction.predictions.win_draw_win}</p>
+            <p>{prediction.status}</p>
           </div>
         </div>
 
         <div className="mt-4 grid grid-cols-3 gap-2 text-sm">
           <div className="text-center">
             <p className="text-muted-foreground">Победа 1</p>
-            <p>{prediction.probability.home_win}%</p>
+            <p>{prediction.home_win}%</p>
           </div>
           <div className="text-center">
             <p className="text-muted-foreground">Ничья</p>
-            <p>{prediction.probability.draw}%</p>
+            <p>{prediction.draw}%</p>
           </div>
           <div className="text-center">
             <p className="text-muted-foreground">Победа 2</p>
-            <p>{prediction.probability.away_win}%</p>
+            <p>{prediction.away_win}%</p>
           </div>
         </div>
 
-        <div className="mt-4 text-sm">
-          <p className="text-muted-foreground">Форма команд:</p>
-          <div className="flex justify-between mt-1">
-            <p>Хозяева: {prediction.form_data.home_team_form}</p>
-            <p>Гости: {prediction.form_data.away_team_form}</p>
+        <div className="mt-4 grid grid-cols-2 gap-2 text-sm">
+          <div className="text-center">
+            <p className="text-muted-foreground">Тотал больше 1.5</p>
+            <p>{prediction.over15goals}%</p>
+          </div>
+          <div className="text-center">
+            <p className="text-muted-foreground">Тотал больше 2.5</p>
+            <p>{prediction.over25goals}%</p>
           </div>
         </div>
       </Card>
