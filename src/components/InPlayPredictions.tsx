@@ -2,11 +2,20 @@ import { useEffect, useState } from "react";
 import { Card } from "@/components/ui/card";
 import { fetchInPlayPredictions } from "@/services/footballApi";
 import { Loader2 } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
 
 const InPlayPredictions = () => {
   const [predictions, setPredictions] = useState<any>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [isOpen, setIsOpen] = useState(false);
 
   const fetchPredictions = async () => {
     setIsLoading(true);
@@ -23,19 +32,13 @@ const InPlayPredictions = () => {
   };
 
   useEffect(() => {
-    fetchPredictions();
-    // Обновляем каждые 30 секунд
-    const interval = setInterval(fetchPredictions, 30000);
-    return () => clearInterval(interval);
-  }, []);
-
-  if (error) {
-    return (
-      <div className="text-red-500 p-4">
-        {error}
-      </div>
-    );
-  }
+    if (isOpen) {
+      fetchPredictions();
+      // Обновляем каждые 5 секунд
+      const interval = setInterval(fetchPredictions, 5000);
+      return () => clearInterval(interval);
+    }
+  }, [isOpen]);
 
   const formatPrediction = (prediction: any) => {
     return (
@@ -54,15 +57,33 @@ const InPlayPredictions = () => {
   };
 
   return (
-    <div className="space-y-4">
-      <div className="flex items-center justify-between">
-        <h3 className="font-semibold">Прогнозы в реальном времени</h3>
-        {isLoading && <Loader2 className="h-4 w-4 animate-spin" />}
-      </div>
-      <div className="space-y-4">
-        {predictions?.predictions?.map(formatPrediction)}
-      </div>
-    </div>
+    <Dialog open={isOpen} onOpenChange={setIsOpen}>
+      <DialogTrigger asChild>
+        <Button className="w-full">
+          Прогнозы в реальном времени
+        </Button>
+      </DialogTrigger>
+      <DialogContent className="max-w-[600px] max-h-[80vh] overflow-y-auto">
+        <DialogHeader>
+          <DialogTitle>
+            <div className="flex items-center justify-between">
+              <span>Прогнозы в реальном времени</span>
+              {isLoading && <Loader2 className="h-4 w-4 animate-spin" />}
+            </div>
+          </DialogTitle>
+        </DialogHeader>
+        
+        {error ? (
+          <div className="text-red-500 p-4">
+            {error}
+          </div>
+        ) : (
+          <div className="space-y-4">
+            {predictions?.predictions?.map(formatPrediction)}
+          </div>
+        )}
+      </DialogContent>
+    </Dialog>
   );
 };
 
