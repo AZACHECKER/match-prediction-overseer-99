@@ -5,7 +5,11 @@ import { Loader2, RefreshCw } from "lucide-react";
 import { fetchLiveMatches } from "@/services/footballApi";
 import { useToast } from "@/components/ui/use-toast";
 
-const MatchList = () => {
+interface MatchListProps {
+  onMatchSelect: (matchId: string) => void;
+}
+
+const MatchList = ({ onMatchSelect }: MatchListProps) => {
   const [matches, setMatches] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const { toast } = useToast();
@@ -19,8 +23,8 @@ const MatchList = () => {
     } catch (error) {
       console.error("Failed to fetch matches:", error);
       toast({
-        title: "Error",
-        description: "Failed to fetch live matches",
+        title: "Ошибка",
+        description: "Не удалось загрузить матчи",
         variant: "destructive",
       });
     } finally {
@@ -46,7 +50,7 @@ const MatchList = () => {
         ) : (
           <>
             <RefreshCw className="h-4 w-4 mr-2" />
-            Refresh Matches
+            Обновить матчи
           </>
         )}
       </Button>
@@ -55,7 +59,8 @@ const MatchList = () => {
         {matches.map((match) => (
           <div
             key={match.id}
-            className="flex items-center justify-between p-3 rounded-lg bg-secondary mb-2 hover:bg-secondary/80 transition-colors"
+            className="flex items-center justify-between p-3 rounded-lg bg-secondary mb-2 hover:bg-secondary/80 transition-colors cursor-pointer"
+            onClick={() => onMatchSelect(match.id.toString())}
           >
             <div className="flex-1">
               <p className="font-medium">

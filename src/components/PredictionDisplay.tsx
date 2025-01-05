@@ -21,19 +21,19 @@ const PredictionDisplay = ({ prediction }: PredictionDisplayProps) => {
       
       <div className="space-y-2">
         <div className="flex justify-between items-center">
-          <span className="text-sm">{prediction.homeTeam} Win</span>
+          <span className="text-sm">Победа {prediction.homeTeam}</span>
           <span className="text-sm font-medium">{prediction.homeWinProb}%</span>
         </div>
         <Progress value={prediction.homeWinProb} className="h-2" />
         
         <div className="flex justify-between items-center">
-          <span className="text-sm">Draw</span>
+          <span className="text-sm">Ничья</span>
           <span className="text-sm font-medium">{prediction.drawProb}%</span>
         </div>
         <Progress value={prediction.drawProb} className="h-2" />
         
         <div className="flex justify-between items-center">
-          <span className="text-sm">{prediction.awayTeam} Win</span>
+          <span className="text-sm">Победа {prediction.awayTeam}</span>
           <span className="text-sm font-medium">{prediction.awayWinProb}%</span>
         </div>
         <Progress value={prediction.awayWinProb} className="h-2" />

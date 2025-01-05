@@ -14,11 +14,11 @@ const Index = () => {
   const [prediction, setPrediction] = useState<any>(null);
   const { toast } = useToast();
 
-  const handleGetPrediction = async () => {
-    if (!matchId) {
+  const handleGetPrediction = async (id: string) => {
+    if (!id) {
       toast({
-        title: "Error",
-        description: "Please enter a match ID",
+        title: "Ошибка",
+        description: "Пожалуйста, введите ID матча",
         variant: "destructive",
       });
       return;
@@ -27,12 +27,13 @@ const Index = () => {
     setIsLoading(true);
     try {
       const apiKey = "da0ced249d4c707bab494d05ab71fa25"; // This should be moved to a secret
-      const predictionData = await fetchMatchPrediction(matchId, apiKey);
+      const predictionData = await fetchMatchPrediction(id, apiKey);
       setPrediction(predictionData);
+      setMatchId(id);
     } catch (error) {
       toast({
-        title: "Error",
-        description: "Failed to get prediction",
+        title: "Ошибка",
+        description: "Не удалось получить прогноз",
         variant: "destructive",
       });
     } finally {
@@ -42,33 +43,33 @@ const Index = () => {
 
   return (
     <div className="min-h-screen p-4 md:p-8 space-y-8">
-      <h1 className="text-3xl font-bold text-center mb-8">Football Matches & Predictions</h1>
+      <h1 className="text-3xl font-bold text-center mb-8">Футбольные матчи и прогнозы</h1>
       
       <div className="grid md:grid-cols-2 gap-8">
         <Card className="p-6 space-y-4">
-          <h2 className="text-xl font-semibold mb-4">Live Matches</h2>
-          <MatchList />
+          <h2 className="text-xl font-semibold mb-4">Текущие матчи</h2>
+          <MatchList onMatchSelect={handleGetPrediction} />
         </Card>
 
         <Card className="p-6 space-y-4">
-          <h2 className="text-xl font-semibold mb-4">Get Prediction</h2>
+          <h2 className="text-xl font-semibold mb-4">Получить прогноз</h2>
           <div className="flex gap-4">
             <Input
-              placeholder="Enter match ID"
+              placeholder="Введите ID матча"
               value={matchId}
               onChange={(e) => setMatchId(e.target.value)}
             />
             <Button 
-              onClick={handleGetPrediction}
+              onClick={() => handleGetPrediction(matchId)}
               disabled={isLoading}
             >
               {isLoading ? (
                 <>
                   <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                  Loading
+                  Загрузка
                 </>
               ) : (
-                "Get Prediction"
+                "Получить прогноз"
               )}
             </Button>
           </div>
