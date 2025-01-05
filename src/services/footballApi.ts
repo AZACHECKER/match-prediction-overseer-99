@@ -58,7 +58,9 @@ export const fetchMatchPrediction = async (matchId: string, apiKey: string) => {
 };
 
 export const fetchInPlayPredictions = async () => {
-  const response = await fetch(`${BETMINER_BASE_URL}/bm/predictions/inplay`, {
+  console.log('Fetching in-play predictions...');
+  const response = await fetch('https://betminer.p.rapidapi.com/bm/predictions/inplay', {
+    method: 'GET',
     headers: {
       'x-rapidapi-key': '248d6b9851msh9d833e8ddf913efp17c26ejsn5f174b6901f8',
       'x-rapidapi-host': 'betminer.p.rapidapi.com'
@@ -66,8 +68,11 @@ export const fetchInPlayPredictions = async () => {
   });
 
   if (!response.ok) {
-    throw new Error('Failed to fetch in-play predictions');
+    console.error('Error fetching predictions:', response.statusText);
+    throw new Error('Failed to fetch predictions');
   }
 
-  return await response.json();
+  const data = await response.json();
+  console.log('Received predictions data:', data);
+  return data;
 };
