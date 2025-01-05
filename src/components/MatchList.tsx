@@ -2,23 +2,27 @@ import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Loader2, RefreshCw } from "lucide-react";
+import { fetchLiveMatches } from "@/services/footballApi";
+import { useToast } from "@/components/ui/use-toast";
 
 const MatchList = () => {
   const [matches, setMatches] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState(false);
+  const { toast } = useToast();
 
   const fetchMatches = async () => {
     setIsLoading(true);
     try {
-      // Simulated API call - replace with your actual API call
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      setMatches([
-        { id: 1, homeTeam: "Team A", awayTeam: "Team B", date: "2024-02-20", score: "2-1" },
-        { id: 2, homeTeam: "Team C", awayTeam: "Team D", date: "2024-02-20", score: "0-0" },
-        { id: 3, homeTeam: "Team E", awayTeam: "Team F", date: "2024-02-20", score: "1-3" },
-      ]);
+      const apiKey = "da0ced249d4c707bab494d05ab71fa25"; // This should be moved to a secret
+      const liveMatches = await fetchLiveMatches(apiKey);
+      setMatches(liveMatches);
     } catch (error) {
       console.error("Failed to fetch matches:", error);
+      toast({
+        title: "Error",
+        description: "Failed to fetch live matches",
+        variant: "destructive",
+      });
     } finally {
       setIsLoading(false);
     }

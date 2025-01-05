@@ -6,6 +6,7 @@ import { useToast } from "@/components/ui/use-toast";
 import { Loader2 } from "lucide-react";
 import MatchList from "@/components/MatchList";
 import PredictionDisplay from "@/components/PredictionDisplay";
+import { fetchMatchPrediction } from "@/services/footballApi";
 
 const Index = () => {
   const [matchId, setMatchId] = useState("");
@@ -25,16 +26,9 @@ const Index = () => {
 
     setIsLoading(true);
     try {
-      // Simulated API call - replace with your actual API call
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      setPrediction({
-        homeTeam: "Team A",
-        awayTeam: "Team B",
-        homeWinProb: 45,
-        drawProb: 25,
-        awayWinProb: 30,
-        advice: "Close match expected with slight advantage to home team"
-      });
+      const apiKey = "da0ced249d4c707bab494d05ab71fa25"; // This should be moved to a secret
+      const predictionData = await fetchMatchPrediction(matchId, apiKey);
+      setPrediction(predictionData);
     } catch (error) {
       toast({
         title: "Error",
