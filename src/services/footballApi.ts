@@ -1,5 +1,5 @@
 const FOOTBALL_BASE_URL = "https://v3.football.api-sports.io";
-const BETMINER_BASE_URL = "https://betminer.p.rapidapi.com";
+const API_KEY = "da0ced249d4c707bab494d05ab71fa25";
 
 interface Match {
   id: number;
@@ -60,14 +60,10 @@ export const fetchMatchPrediction = async (matchId: string, apiKey: string) => {
 export const fetchInPlayPredictions = async () => {
   console.log('Fetching in-play predictions...');
   
-  // Get current date in YYYY-MM-DD format
-  const today = new Date().toISOString().split('T')[0];
-  
-  const response = await fetch(`${BETMINER_BASE_URL}/bm/v2/matches/${today}/${today}`, {
-    method: 'GET',
+  const response = await fetch(`${FOOTBALL_BASE_URL}/odds/live`, {
     headers: {
-      'x-rapidapi-key': '248d6b9851msh9d833e8ddf913efp17c26ejsn5f174b6901f8',
-      'x-rapidapi-host': 'betminer.p.rapidapi.com'
+      'x-rapidapi-host': 'v3.football.api-sports.io',
+      'x-rapidapi-key': API_KEY
     }
   });
 
@@ -78,5 +74,5 @@ export const fetchInPlayPredictions = async () => {
 
   const data = await response.json();
   console.log('Received predictions data:', data);
-  return data;
+  return data.response;
 };

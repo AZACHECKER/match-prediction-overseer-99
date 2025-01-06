@@ -12,34 +12,46 @@ import {
   DialogDescription,
 } from "@/components/ui/dialog";
 
-interface MatchPrediction {
-  match_details: {
-    home_team: string;
-    away_team: string;
-    home_logo: string;
-    away_logo: string;
+interface LiveOdd {
+  fixture: {
+    id: number;
+    date: string;
+    status: {
+      long: string;
+      short: string;
+    };
+  };
+  league: {
+    name: string;
     country: string;
-    competition: string;
-    status: string;
   };
-  match_score: {
-    home_score: number;
-    away_score: number;
+  teams: {
+    home: {
+      name: string;
+      logo: string;
+    };
+    away: {
+      name: string;
+      logo: string;
+    };
   };
-  probability: {
-    home_win: string;
-    draw: string;
-    away_win: string;
+  goals: {
+    home: number;
+    away: number;
   };
-  predictions: {
-    btts: string;
-    over15: string;
-    over25: string;
+  odds: {
+    [key: string]: {
+      name: string;
+      values: Array<{
+        value: string;
+        odd: string;
+      }>;
+    }[];
   };
 }
 
 const InPlayPredictions = () => {
-  const [predictions, setPredictions] = useState<MatchPrediction[]>([]);
+  const [predictions, setPredictions] = useState<LiveOdd[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [isOpen, setIsOpen] = useState(false);
@@ -61,31 +73,35 @@ const InPlayPredictions = () => {
   useEffect(() => {
     if (isOpen) {
       fetchPredictions();
-      const interval = setInterval(fetchPredictions, 5000);
+      const interval = setInterval(fetchPredictions, 15000);
       return () => clearInterval(interval);
     }
   }, [isOpen]);
 
-  const formatPrediction = (prediction: MatchPrediction) => {
+  const formatPrediction = (match: LiveOdd) => {
+    const homeOdds = match.odds?.["1"]?.[0]?.values?.[0]?.odd || "N/A";
+    const drawOdds = match.odds?.["1"]?.[0]?.values?.[1]?.odd || "N/A";
+    const awayOdds = match.odds?.["1"]?.[0]?.values?.[2]?.odd || "N/A";
+
     return (
-      <Card key={`${prediction.match_details.home_team}-${prediction.match_details.away_team}`} className="p-4 mb-4">
+      <Card key={match.fixture.id} className="p-4 mb-4">
         <div className="flex items-center justify-between mb-4">
           <div className="flex items-center gap-2">
             <img 
-              src={prediction.match_details.home_logo} 
-              alt={prediction.match_details.home_team}
+              src={match.teams.home.logo} 
+              alt={match.teams.home.name}
               className="w-8 h-8"
             />
-            <span className="font-semibold">{prediction.match_details.home_team}</span>
+            <span className="font-semibold">{match.teams.home.name}</span>
           </div>
           <div className="text-lg font-bold">
-            {prediction.match_score.home_score} - {prediction.match_score.away_score}
+            {match.goals.home} - {match.goals.away}
           </div>
           <div className="flex items-center gap-2">
-            <span className="font-semibold">{prediction.match_details.away_team}</span>
+            <span className="font-semibold">{match.teams.away.name}</span>
             <img 
-              src={prediction.match_details.away_logo} 
-              alt={prediction.match_details.away_team}
+              src={match.teams.away.logo} 
+              alt={match.teams.away.name}
               className="w-8 h-8"
             />
           </div>
@@ -94,37 +110,26 @@ const InPlayPredictions = () => {
         <div className="grid grid-cols-2 gap-4 text-sm">
           <div>
             <p className="text-muted-foreground">Турнир:</p>
-            <p>{prediction.match_details.competition} ({prediction.match_details.country})</p>
+            <p>{match.league.name} ({match.league.country})</p>
           </div>
           <div>
             <p className="text-muted-foreground">Статус матча:</p>
-            <p>{prediction.match_details.status}</p>
+            <p>{match.fixture.status.long}</p>
           </div>
         </div>
 
         <div className="mt-4 grid grid-cols-3 gap-2 text-sm">
           <div className="text-center">
-            <p className="text-muted-foreground">Победа 1</p>
-            <p>{prediction.probability.home_win}%</p>
+            <p className="text-muted-foreground">П1</p>
+            <p>{homeOdds}</p>
           </div>
           <div className="text-center">
-            <p className="text-muted-foreground">Ничья</p>
-            <p>{prediction.probability.draw}%</p>
+            <p className="text-muted-foreground">X</p>
+            <p>{drawOdds}</p>
           </div>
           <div className="text-center">
-            <p className="text-muted-foreground">Победа 2</p>
-            <p>{prediction.probability.away_win}%</p>
-          </div>
-        </div>
-
-        <div className="mt-4 grid grid-cols-2 gap-2 text-sm">
-          <div className="text-center">
-            <p className="text-muted-foreground">Тотал больше 1.5</p>
-            <p>{prediction.predictions.over15}%</p>
-          </div>
-          <div className="text-center">
-            <p className="text-muted-foreground">Тотал больше 2.5</p>
-            <p>{prediction.predictions.over25}%</p>
+            <p className="text-muted-foreground">П2</p>
+            <p>{awayOdds}</p>
           </div>
         </div>
       </Card>
@@ -135,19 +140,19 @@ const InPlayPredictions = () => {
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
       <DialogTrigger asChild>
         <Button className="w-full">
-          Прогнозы в реальном времени
+          Коэффициенты в реальном времени
         </Button>
       </DialogTrigger>
       <DialogContent className="max-w-[800px] max-h-[80vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle>
             <div className="flex items-center justify-between">
-              <span>Прогнозы в реальном времени</span>
+              <span>Коэффициенты в реальном времени</span>
               {isLoading && <Loader2 className="h-4 w-4 animate-spin" />}
             </div>
           </DialogTitle>
           <DialogDescription>
-            Обновление каждые 5 секунд
+            Обновление каждые 15 секунд
           </DialogDescription>
         </DialogHeader>
         
