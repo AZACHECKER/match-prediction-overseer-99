@@ -24,9 +24,14 @@ const MatchAnalytics = ({ homeTeam, awayTeam, score }: MatchAnalyticsProps) => {
         const matchContext = `${homeTeam} vs ${awayTeam} ${score ? `(${score})` : ''}`;
         const result = await classifier(matchContext);
         
-        setAnalysis(result[0].label === "POSITIVE" 
-          ? "Высокая вероятность результативного матча" 
-          : "Возможен осторожный матч с небольшим количеством голов");
+        // Check if result is an array and has the expected structure
+        if (Array.isArray(result) && result[0] && typeof result[0] === 'object' && 'label' in result[0]) {
+          setAnalysis(result[0].label === "POSITIVE" 
+            ? "Высокая вероятность результативного матча" 
+            : "Возможен осторожный матч с небольшим количеством голов");
+        } else {
+          setAnalysis("Не удалось проанализировать матч");
+        }
       } catch (error) {
         console.error("Error analyzing match:", error);
         setAnalysis("Не удалось выполнить анализ матча");

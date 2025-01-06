@@ -4,6 +4,7 @@ import { fetchInPlayPredictions } from "@/services/footballApi";
 import { Loader2, TrendingUp } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import MatchAnalytics from "./MatchAnalytics";
+import MatchFieldVisualization from "./MatchFieldVisualization";
 import {
   Dialog,
   DialogContent,
@@ -85,6 +86,28 @@ const InPlayPredictions = () => {
     const awayOdds = match.odds?.["1"]?.[0]?.values?.[2]?.odd || "N/A";
     const score = `${match.goals.home}-${match.goals.away}`;
 
+    // Sample match events (in a real application, these would come from the API)
+    const sampleEvents = [
+      {
+        type: 'goal' as const,
+        position: { x: 75, y: 50 },
+        team: 'home' as const,
+        minute: 23
+      },
+      {
+        type: 'shot' as const,
+        position: { x: 85, y: 40 },
+        team: 'away' as const,
+        minute: 35
+      },
+      {
+        type: 'corner' as const,
+        position: { x: 98, y: 5 },
+        team: 'home' as const,
+        minute: 42
+      }
+    ];
+
     return (
       <Card 
         key={match.fixture.id} 
@@ -110,6 +133,14 @@ const InPlayPredictions = () => {
               className="w-8 h-8 animate-fade-in"
             />
           </div>
+        </div>
+
+        <div className="mb-4">
+          <MatchFieldVisualization 
+            events={sampleEvents}
+            homeTeam={match.teams.home.name}
+            awayTeam={match.teams.away.name}
+          />
         </div>
 
         <div className="grid grid-cols-2 gap-4 text-sm mb-4">
