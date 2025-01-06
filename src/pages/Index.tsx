@@ -2,8 +2,15 @@ import { useState } from "react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { useToast } from "@/components/ui/use-toast";
+import { useToast } from "@/hooks/use-toast";
 import { Loader2, Search, Activity, Key } from "lucide-react";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import MatchList from "@/components/MatchList";
 import PredictionDisplay from "@/components/PredictionDisplay";
 import InPlayPredictions from "@/components/InPlayPredictions";
@@ -13,6 +20,8 @@ const Index = () => {
   const [matchId, setMatchId] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [prediction, setPrediction] = useState<any>(null);
+  const [isApiKeyDialogOpen, setIsApiKeyDialogOpen] = useState(false);
+  const [apiKey, setApiKey] = useState("");
   const { toast } = useToast();
 
   const handleGetPrediction = async (id: string) => {
@@ -42,6 +51,24 @@ const Index = () => {
     }
   };
 
+  const handleSaveApiKey = () => {
+    if (!apiKey) {
+      toast({
+        title: "Ошибка",
+        description: "Пожалуйста, введите API ключ",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    localStorage.setItem("football-api-key", apiKey);
+    toast({
+      title: "Успешно",
+      description: "API ключ сохранен",
+    });
+    setIsApiKeyDialogOpen(false);
+  };
+
   return (
     <div className="min-h-screen p-4 md:p-8 space-y-8 bg-gradient-to-br from-background to-background/90">
       <div className="absolute top-4 right-4">
@@ -49,16 +76,31 @@ const Index = () => {
           variant="outline"
           size="icon"
           className="rounded-full"
-          onClick={() => {
-            toast({
-              title: "API Ключ",
-              description: "Пожалуйста, введите ваш API ключ в форму ниже",
-            });
-          }}
+          onClick={() => setIsApiKeyDialogOpen(true)}
         >
           <Key className="h-4 w-4" />
         </Button>
       </div>
+
+      <Dialog open={isApiKeyDialogOpen} onOpenChange={setIsApiKeyDialogOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Введите API ключ</DialogTitle>
+            <DialogDescription>
+              Введите ваш API ключ для доступа к футбольным данным
+            </DialogDescription>
+          </DialogHeader>
+          <div className="grid gap-4 py-4">
+            <Input
+              placeholder="Введите API ключ"
+              value={apiKey}
+              onChange={(e) => setApiKey(e.target.value)}
+              type="password"
+            />
+            <Button onClick={handleSaveApiKey}>Сохранить</Button>
+          </div>
+        </DialogContent>
+      </Dialog>
 
       <h1 className="text-4xl font-bold text-center mb-8 bg-clip-text text-transparent bg-gradient-to-r from-primary to-primary-foreground animate-fade-in">
         Футбольные матчи и прогнозы
