@@ -3,7 +3,7 @@ import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/components/ui/use-toast";
-import { Loader2, Search, Activity } from "lucide-react";
+import { Loader2, Search, Activity, Key } from "lucide-react";
 import MatchList from "@/components/MatchList";
 import PredictionDisplay from "@/components/PredictionDisplay";
 import InPlayPredictions from "@/components/InPlayPredictions";
@@ -44,6 +44,22 @@ const Index = () => {
 
   return (
     <div className="min-h-screen p-4 md:p-8 space-y-8 bg-gradient-to-br from-background to-background/90">
+      <div className="absolute top-4 right-4">
+        <Button
+          variant="outline"
+          size="icon"
+          className="rounded-full"
+          onClick={() => {
+            toast({
+              title: "API Ключ",
+              description: "Пожалуйста, введите ваш API ключ в форму ниже",
+            });
+          }}
+        >
+          <Key className="h-4 w-4" />
+        </Button>
+      </div>
+
       <h1 className="text-4xl font-bold text-center mb-8 bg-clip-text text-transparent bg-gradient-to-r from-primary to-primary-foreground animate-fade-in">
         Футбольные матчи и прогнозы
       </h1>
