@@ -1,8 +1,9 @@
 import { useEffect, useState } from "react";
 import { Card } from "@/components/ui/card";
 import { fetchInPlayPredictions } from "@/services/footballApi";
-import { Loader2 } from "lucide-react";
+import { Loader2, TrendingUp } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import MatchAnalytics from "./MatchAnalytics";
 import {
   Dialog,
   DialogContent,
@@ -82,32 +83,36 @@ const InPlayPredictions = () => {
     const homeOdds = match.odds?.["1"]?.[0]?.values?.[0]?.odd || "N/A";
     const drawOdds = match.odds?.["1"]?.[0]?.values?.[1]?.odd || "N/A";
     const awayOdds = match.odds?.["1"]?.[0]?.values?.[2]?.odd || "N/A";
+    const score = `${match.goals.home}-${match.goals.away}`;
 
     return (
-      <Card key={match.fixture.id} className="p-4 mb-4">
+      <Card 
+        key={match.fixture.id} 
+        className="p-4 mb-4 transform transition-all duration-300 hover:scale-[1.02] hover:shadow-lg bg-gradient-to-r from-background to-background/50"
+      >
         <div className="flex items-center justify-between mb-4">
           <div className="flex items-center gap-2">
             <img 
               src={match.teams.home.logo} 
               alt={match.teams.home.name}
-              className="w-8 h-8"
+              className="w-8 h-8 animate-fade-in"
             />
             <span className="font-semibold">{match.teams.home.name}</span>
           </div>
-          <div className="text-lg font-bold">
-            {match.goals.home} - {match.goals.away}
+          <div className="text-lg font-bold bg-primary/10 px-3 py-1 rounded-full">
+            {score}
           </div>
           <div className="flex items-center gap-2">
             <span className="font-semibold">{match.teams.away.name}</span>
             <img 
               src={match.teams.away.logo} 
               alt={match.teams.away.name}
-              className="w-8 h-8"
+              className="w-8 h-8 animate-fade-in"
             />
           </div>
         </div>
 
-        <div className="grid grid-cols-2 gap-4 text-sm">
+        <div className="grid grid-cols-2 gap-4 text-sm mb-4">
           <div>
             <p className="text-muted-foreground">Турнир:</p>
             <p>{match.league.name} ({match.league.country})</p>
@@ -118,20 +123,26 @@ const InPlayPredictions = () => {
           </div>
         </div>
 
-        <div className="mt-4 grid grid-cols-3 gap-2 text-sm">
+        <div className="grid grid-cols-3 gap-2 text-sm p-3 bg-secondary/50 rounded-lg mb-4">
           <div className="text-center">
             <p className="text-muted-foreground">П1</p>
-            <p>{homeOdds}</p>
+            <p className="font-mono">{homeOdds}</p>
           </div>
-          <div className="text-center">
+          <div className="text-center border-x border-border/30">
             <p className="text-muted-foreground">X</p>
-            <p>{drawOdds}</p>
+            <p className="font-mono">{drawOdds}</p>
           </div>
           <div className="text-center">
             <p className="text-muted-foreground">П2</p>
-            <p>{awayOdds}</p>
+            <p className="font-mono">{awayOdds}</p>
           </div>
         </div>
+
+        <MatchAnalytics 
+          homeTeam={match.teams.home.name}
+          awayTeam={match.teams.away.name}
+          score={score}
+        />
       </Card>
     );
   };
@@ -139,7 +150,8 @@ const InPlayPredictions = () => {
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
       <DialogTrigger asChild>
-        <Button className="w-full">
+        <Button className="w-full group hover:shadow-lg transition-all duration-300">
+          <TrendingUp className="w-4 h-4 mr-2 group-hover:animate-bounce" />
           Коэффициенты в реальном времени
         </Button>
       </DialogTrigger>
@@ -157,7 +169,7 @@ const InPlayPredictions = () => {
         </DialogHeader>
         
         {error ? (
-          <div className="text-red-500 p-4">
+          <div className="text-red-500 p-4 text-center bg-red-500/10 rounded-lg">
             {error}
           </div>
         ) : (

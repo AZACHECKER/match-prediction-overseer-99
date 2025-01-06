@@ -3,7 +3,7 @@ import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/components/ui/use-toast";
-import { Loader2 } from "lucide-react";
+import { Loader2, Search, Activity } from "lucide-react";
 import MatchList from "@/components/MatchList";
 import PredictionDisplay from "@/components/PredictionDisplay";
 import InPlayPredictions from "@/components/InPlayPredictions";
@@ -43,27 +43,37 @@ const Index = () => {
   };
 
   return (
-    <div className="min-h-screen p-4 md:p-8 space-y-8">
-      <h1 className="text-3xl font-bold text-center mb-8">Футбольные матчи и прогнозы</h1>
+    <div className="min-h-screen p-4 md:p-8 space-y-8 bg-gradient-to-br from-background to-background/90">
+      <h1 className="text-4xl font-bold text-center mb-8 bg-clip-text text-transparent bg-gradient-to-r from-primary to-primary-foreground animate-fade-in">
+        Футбольные матчи и прогнозы
+      </h1>
       
-      <div className="grid md:grid-cols-2 gap-8">
-        <Card className="p-6 space-y-4">
-          <h2 className="text-xl font-semibold mb-4">Текущие матчи</h2>
+      <div className="grid md:grid-cols-2 gap-8 animate-fade-in">
+        <Card className="p-6 space-y-4 backdrop-blur-sm bg-gradient-to-br from-card/50 to-card">
+          <h2 className="text-xl font-semibold mb-4 flex items-center gap-2">
+            <Activity className="w-5 h-5" />
+            Текущие матчи
+          </h2>
           <MatchList onMatchSelect={handleGetPrediction} />
           <InPlayPredictions />
         </Card>
 
-        <Card className="p-6 space-y-4">
-          <h2 className="text-xl font-semibold mb-4">Получить прогноз</h2>
+        <Card className="p-6 space-y-4 backdrop-blur-sm bg-gradient-to-br from-card/50 to-card">
+          <h2 className="text-xl font-semibold mb-4 flex items-center gap-2">
+            <Search className="w-5 h-5" />
+            Получить прогноз
+          </h2>
           <div className="flex gap-4">
             <Input
               placeholder="Введите ID матча"
               value={matchId}
               onChange={(e) => setMatchId(e.target.value)}
+              className="transition-all duration-300 focus:ring-2 focus:ring-primary/50"
             />
             <Button 
               onClick={() => handleGetPrediction(matchId)}
               disabled={isLoading}
+              className="transition-all duration-300 hover:shadow-lg"
             >
               {isLoading ? (
                 <>
@@ -76,7 +86,11 @@ const Index = () => {
             </Button>
           </div>
           
-          {prediction && <PredictionDisplay prediction={prediction} />}
+          {prediction && (
+            <div className="animate-fade-in">
+              <PredictionDisplay prediction={prediction} />
+            </div>
+          )}
         </Card>
       </div>
     </div>
